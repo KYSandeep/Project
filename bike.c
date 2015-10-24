@@ -14,7 +14,20 @@ void bikeinit(){
 	bike1.marker = BIKE1_MARKER;
 	bike2.marker = BIKE2.MARKER;
 	
-	bike1.tailcolor = BIKE1_TAILCOLOR;
-	bike2.tailcolor = BIKE2_TAILCOLOR;
-
+	bike1.tailcolor = BIKE1_COLORCODE;
+	bike2.tailcolor = BIKE2_COLORCODE;
+	
+	bike1.headcolor = BIKE1HEAD_COLORCODE;
+	bike2.headcolor = BIKE2HEAD_COLORCODE;
+	
+	game.map[bike1.head.x][bike1.head.y] = bike1.marker;
+	game.map[bike2.head.x][bike2.head.y] = bike2.marker;
+	
+	bike1.direction = bike1.new_direction = BIKE1_STARTDIR;
+	bike2.direction = bike2.new_direction = BIKE2_STARTDIR;
+	
+	mvaddch(bike1.head, BIKEHEAD);
+	mvaddch(bike2.head, BIKEHEAD);
+	
+	
 }
