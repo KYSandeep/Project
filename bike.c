@@ -12,7 +12,7 @@ void bikeinit(){
 	setpoint(bike2.head, BIKE2_STARTX, BIKE2_STARTY);
 	
 	bike1.marker = BIKE1_MARKER;
-	bike2.marker = BIKE2.MARKER;
+	bike2.marker = BIKE2_MARKER;
 	
 	bike1.tailcolor = BIKE1_COLORCODE;
 	bike2.tailcolor = BIKE2_COLORCODE;
