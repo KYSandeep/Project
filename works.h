@@ -22,8 +22,8 @@
 typedef struct gamestructure {
 	char state;
 	char speed;
-	int difficulty;
-	int depth;
+	//int difficulty;
+	//int depth;
 	char winner;
 	char map[SCREENWIDTH][SCREENHEIGHT];
 

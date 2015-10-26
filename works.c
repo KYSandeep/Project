@@ -30,7 +30,7 @@ void startgame(){
     	clearscreen();
     	makewalls();
     	bikeinit();
-    	game.depth = game.difficulty;
+    	//game.depth = game.difficulty;
     
 
     	init_pair(BIKE1_COLORCODE, COLOR_BLUE, COLOR_BLUE);
@@ -78,7 +78,7 @@ void walls(){
 }
 
 
-void engineClearMap(){
+void worksclearmap(){
     int i, j;
     for (i=0; i<SCREENWIDTH; i++){
         for (j=0; j<SCREENHEIGHT; j++){
@@ -89,7 +89,7 @@ void engineClearMap(){
 
 
 
-void engineProcessGameWinner(){
+void gamewinner(){
     	if ((bike1.head.x == bike2.head.x) && (bike1.head.y == bike2.head.y)) 
 		bike1.alive = bike2.alive = 0;
     	if (bike1.alive != 0) 

@@ -77,6 +77,7 @@ void Twoplayergame(){
 } 
 
 int main(){
+	mainmenu();
 	worksinit();
 	ExitGame();
 
