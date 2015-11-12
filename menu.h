@@ -1,12 +1,38 @@
 #ifdef DEFINE_MENU
 #define DEFINE_MENU
 
+#define MENUBORDER '*'
+#define MENUBOXWIDTH 50
+#define MENUBOXHEIGHT 10
+#define MENUBOXSTARTX (SCREENWIDTH - MENUBOXWIDTH )/2
+#define MENUBOXSTARTY 10
+#define MENUTEXTSTARTX (LOGOSTARTX + 22)
+#define MENUTEXTSTARTY (LOGOSTARTY + 12 )
+#define GAMEMODESTARTX (LOGOSTARTX+2)
+#define GAMEMODESTARTY (LOGOSTARTY + 12)
+
+
+#define ENDBOXWIDTH 30
+#define ENDBOXHEIGHT 10
+#define ENDCHOICES 2
+#define ENDBOXSTARTX (SCREENWIDTH - ENDBOXWIDTH)/2
+#define ENDBOXSTARTY (SCREENHEIGHT - ENDBOXHEIGHT)/2 - 1
+#define ENDBOXENDX (ENDBOXSTARTX + ENDBOXWIDTH -1)
+#define ENDBOXENDY (ENDBOXSTARTY + ENDBOXHEIGHT)
+
+#define RESTART 1
+#define QUITTOMENU 2
+
+#define LOGOSTARTX ((SCREENWIDTH - 70)/2)
+#define LOGOSTARTY 2
+
+
 void mainmenu();
 int getinput(int*, int*);
 void PauseGame();
 void endgame();
 void printwinner();
-void startattr(int);
+void startattr(int );
 void endprint(int highlight);
 
 #endif

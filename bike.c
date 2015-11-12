@@ -1,6 +1,6 @@
 #include<ncurses.h>
-#include"bike.h"
 #include"works.h"
+#include"bike.h"
 
 bikestruct bike1;
 bikestruct bike2;
@@ -26,8 +26,8 @@ void bikeinit(){
 	bike1.direction = bike1.new_direction = BIKE1_STARTDIR;
 	bike2.direction = bike2.new_direction = BIKE2_STARTDIR;
 	
-	mvaddch(bike1.head, BIKEHEAD);
-	mvaddch(bike2.head, BIKEHEAD);
+	mvaddchar(bike1.head, BIKEHEAD);
+	mvaddchar(bike2.head, BIKEHEAD);
 	
 	
 }

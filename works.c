@@ -1,8 +1,11 @@
 #include<stdio.h>
 #include<ncurses.h>
 #include<stdlib.h>
+#include<pthread.h>
 #include"works.h"
 #include"bike.h"
+#include"ai.h"
+
 
 void gameinit(){
 	initscr();
@@ -14,7 +17,7 @@ void gameinit(){
         	endwin();
         	printf ("Your console screen is smaller than %d x %d\nPlease resize your window and try again\n", SCREENWIDTH, SCREENHEIGHT);
         	printf("The set SCREENWIDTH and SCREENHEIGHT in for the game must be greater than 24x80\n");
-		exit();
+		exit(0);
 	}
 	raw();
 	noecho();
@@ -27,10 +30,10 @@ void gameinit(){
 
 void startgame(){ 
 	nodelay(stdscr, TRUE);
-    	clearscreen();
-    	makewalls();
+    	worksclearmap();
+    	walls();
     	bikeinit();
-    	//game.depth = game.difficulty;
+    	game.depth = game.difficulty;
     
 
     	init_pair(BIKE1_COLORCODE, COLOR_BLUE, COLOR_BLUE);
@@ -53,35 +56,46 @@ void startmenu(){
 		
 	erase();
 	refresh();
-	flushimp();
+	flushinp();
 	return;
 }
 
 void walls(){
 
-        WINDOW *my_win;
-        int startx, starty, width, height;
-        int ch;
+    attrset(COLOR_PAIR(OUTSIDE_COLORCODE));
+    erase();
+    bkgd(COLOR_PAIR(OUTSIDE_COLORCODE));
+    
+    attrset(COLOR_PAIR(WALL_COLORCODE));
+    //Draw vertical walls
+    int y;
+    for (y=0; y<SCREENHEIGHT; y++){
+        mvaddch (0, y, WALLCHAR);
+        game.map[0][y] = WALL;
+        
+        mvaddch (SCREENWIDTH - 1, y, WALLCHAR);
+        game.map[SCREENWIDTH-1][y] = WALL;
+    }
 
-        //cbreak();                       /* Line buffering disabled, Pass on
-        height = 24;
-        width = 80;
-        //starty = (LINES - height) / 2;  /* Calculating for a center placement */
-        //startx = (COLS - width) / 2;    /* of the window                */
-        my_win = newwin(height, width, starty, startx);
-        box(my_win, 0 , 0);          /* 0, 0 gives default characters 
-                                         * for the vertical and horizontal
-                                         * lines                        */
-        wrefresh(my_win);
-         return;
+    //Draw horizontal walls
+    int x;
+    for (x=0; x<SCREENWIDTH; x++){
+        mvaddch (x, 0, WALLCHAR);
+        game.map[x][0] = WALL;
+        
+        mvaddch (x, SCREENHEIGHT - 1, WALLCHAR);
+        game.map[x][SCREENHEIGHT-1] = WALL;
+    }
+
+    return;
 
 }
 
 
 void worksclearmap(){
     int i, j;
-    for (i=0; i<SCREENWIDTH; i++){
-        for (j=0; j<SCREENHEIGHT; j++){
+    for (i=0; i < SCREENWIDTH; i++){
+        for (j=0; j < SCREENHEIGHT; j++){
             game.map[i][j] = 0;
         }
     }
@@ -99,38 +113,72 @@ void gamewinner(){
     	else game.winner = 0;
 }
 
+void engineSleepAndCallBot( bikestruct* botbikepointer, bikestruct* usrbikepointer, long int usleeptime){
+    struct timespec timeout;
+    pthread_t aithread;
+    int error = 0;
+    void *exitstatus;
 
-void InitQueue (queue* q, int* array, int arraysize){
-    q->size = q->front = q->behindback = 0;
-    q->maxqueuesize = arraysize;
-    if (array != NULL){
-        q->data = array;
-	    }
-    else{
-        q->data = (int*) malloc ((q->maxqueuesize + 1) * sizeof(int));
+    static int counter;
+
+    botbikepointer->new_direction = botbikepointer->direction;
+
+    bikestruct* bikes[] = {botbikepointer, usrbikepointer};
+
+    doneflag = 0;
+    pthread_create(&aithread, NULL, aiProcessGame, bikes);
+
+    usleep(usleeptime);
+
+    error = pthread_cancel(aithread);
+    error = pthread_join(aithread, &exitstatus);
+
+    if (doneflag == 1) {
+        if (counter > 0) counter--;
+        else if (game.depth < game.difficulty) game.depth++;
     }
+    if (doneflag == 0) {
+        counter = ENGINETIMEOUTCOUNTER;
+        game.depth--;
+    }
+
+    return;
+}
+
+
+
+
+void initqueue (queue* q, int* array, int arraysize){
+	q->size = q->front = q->behindback = 0;
+	q->maxqsize = arraysize;
+	if (array != NULL){
+		q->data = array;
+	}
+	else{
+		q->data = (int*) malloc ((q->maxqsize + 1) * sizeof(int));
+	}
 }
 
 void enqueue (queue* q, int val){
-    if ((q->size == 0) || (q->behindback != q->front)){
-        q->size++;
-        q->data[q->behindback] = val;
-        q->lastenqueued = val;
-        q->behindback = (q->behindback + 1) % q->maxqueuesize;
-    }
+	if ((q->size == 0) || (q->behindback != q->front)){
+		q->size++;
+		q->data[q->behindback] = val;
+		q->lastenqueued = val;
+		q->behindback = (q->behindback + 1) % q->maxqsize;
+	}
 }
 
 int dequeue (queue* q){
-    if (q->size > 0){
-        q->size--;
-        int returnvalue = q->data[q->front];
-        q->front = (q->front + 1) % q->maxqueuesize;
-        return returnvalue;
-    }
-    else return 0;
+	if (q->size > 0){
+		q->size--;
+		int returnvalue = q->data[q->front];
+		q->front = (q->front + 1) % q->maxqsize;
+		return returnvalue;
+	}
+	else return 0;
 }
 
 
-void FreeQueue (queue* q){
-    free(q->data);
+void freequeue (queue* q){
+	free(q->data);
 }

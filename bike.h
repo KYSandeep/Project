@@ -1,6 +1,6 @@
-#include"works.h"
 #ifndef BIKEDEFINED
 #define BIKEDEFINED
+
 #define UP -2
 #define DOWN 2
 #define LEFT -1
@@ -12,7 +12,7 @@
 #define BIKE2_STARTY (SCREENWIDTH - 5)
 #define BIKE1_STARTDIR RIGHT
 #define BIKE2_STARTDIR LEFT
-#define BIKE2_MARKER 1
+#define BIKE1_MARKER 1
 #define BIKE2_MARKER 2
 
 #define MAXSIZE (MAXSQUARES / 2)
@@ -43,18 +43,18 @@ extern bikestruct bike2;
 
 void bikeinit();
 
-#define bikeIsDirectionAllowed(macrobike, macrodirection) (macro_bikr.direction + macrodirection != 0)
+#define bikeIsDirectionAllowed(macrobike, macrodirection) (macrobike.direction + macrodirection != 0)
 
 #define bikeUpdateDirection(macrobike, macrodirection)  if (macrobike.direction + macrodirection != 0) {macrobike.direction = macrodirection;}
 
 
 #define bikelong(mbike) { attrset(COLOR_PAIR(mbike.tailcolor));				\
-				 mvaddch(mbike.head, BIKEBODY);			\
-			movepoint(msbike.head, mbike.direction % 2, mbike.direction / 2); \
-			if(game.map[mbike.head.x][mbike.head.y] != 0){		\					mbike.alive = 0;}						\
-			game.map[mbike.head,x][mbike.head.y] = mbike.marker;		\
+				 mvaddchar(mbike.head, BIKEBODY);			\
+			movepoint(mbike.head, mbike.direction % 2, mbike.direction / 2); \
+			if(game.map[mbike.head.x][mbike.head.y] != 0){	mbike.alive = 0;}\
+			game.map[mbike.head.x][mbike.head.y] = mbike.marker;		\
 			attrset(COLOR_PAIR(mbike.headcolor));				\
-			mvaddch(mbike.head, BIKEHEAD)				\
+			mvaddchar(mbike.head, BIKEHEAD);				\
 			mbike.size++;						\
 		}
 				
