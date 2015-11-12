@@ -1,33 +1,31 @@
-#include<ncurses.h>
-#include"works.h"
-#include"bike.h"
+#include "bike.h"
+#include "works.h"
+#include "curses.h"
 
-bikestruct bike1;
-bikestruct bike2;
+struct snakestructure snake1;
+struct snakestructure snake2;
 
 
-void bikeinit(){
-	bike1.size = bike1.alive = bike2.size = bike2.alive = 1;
-	setpoint(bike1.head, BIKE1_STARTX, BIKE1_STARTY);
-	setpoint(bike2.head, BIKE2_STARTX, BIKE2_STARTY);
-	
-	bike1.marker = BIKE1_MARKER;
-	bike2.marker = BIKE2_MARKER;
-	
-	bike1.tailcolor = BIKE1_COLORCODE;
-	bike2.tailcolor = BIKE2_COLORCODE;
-	
-	bike1.headcolor = BIKE1HEAD_COLORCODE;
-	bike2.headcolor = BIKE2HEAD_COLORCODE;
-	
-	game.map[bike1.head.x][bike1.head.y] = bike1.marker;
-	game.map[bike2.head.x][bike2.head.y] = bike2.marker;
-	
-	bike1.direction = bike1.new_direction = BIKE1_STARTDIR;
-	bike2.direction = bike2.new_direction = BIKE2_STARTDIR;
-	
-	mvaddchar(bike1.head, BIKEHEAD);
-	mvaddchar(bike2.head, BIKEHEAD);
-	
-	
+void snakeInit(){
+    snake1.size = snake1.alive = snake2.size = snake2.alive = 1;
+
+    SetPoint (snake1.head, SNAKE1_STARTX, SNAKE1_STARTY);
+    SetPoint (snake2.head, SNAKE2_STARTX, SNAKE2_STARTY);
+
+    snake1.marker = SNAKE1_MARKER;
+    snake2.marker = SNAKE2_MARKER;
+    
+    snake1.colorcode = SNAKE1_COLORCODE;
+    snake2.colorcode = SNAKE2_COLORCODE;
+    snake1.headcolorcode = SNAKE1HEAD_COLORCODE;
+    snake2.headcolorcode = SNAKE2HEAD_COLORCODE;
+
+    game.map[snake1.head.x][snake1.head.y] = snake1.marker;
+    game.map[snake2.head.x][snake2.head.y] = snake2.marker;
+
+    snake1.direction = snake1.bot_newdirection = SNAKE1_STARTDIRECTION;
+    snake2.direction = snake2.bot_newdirection = SNAKE2_STARTDIRECTION;
+    
+    engineAddCharFromPoint (snake1.head, SNAKEHEAD);
+    engineAddCharFromPoint (snake2.head, SNAKEHEAD);
 }

@@ -1,8 +1,8 @@
-#ifdef MAINDEFINED
-#define MAINDEFINED
+#ifndef MAIN_DEFINED
+#define MAIN_DEFINED
 
-void Twoplayergame();
-void Oneplayergame();
+void TwoPlayerGame();
+void SinglePlayerGame();
 void ExitGame();
 
 #endif

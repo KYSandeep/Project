@@ -1,64 +1,70 @@
-#ifndef BIKEDEFINED
-#define BIKEDEFINED
+#ifndef SNAKE_DEFINED
+#define SNAKE_DEFINED
+
+#include "works.h"
 
 #define UP -2
 #define DOWN 2
 #define LEFT -1
 #define RIGHT 1
-	
-#define BIKE1_STARTX 4
-#define BIKE2_STARTX (SCREENWIDTH - 5)
-#define BIKE1_STARTY (SCREENWIDTH - 5)
-#define BIKE2_STARTY (SCREENWIDTH - 5)
-#define BIKE1_STARTDIR RIGHT
-#define BIKE2_STARTDIR LEFT
-#define BIKE1_MARKER 1
-#define BIKE2_MARKER 2
 
-#define MAXSIZE (MAXSQUARES / 2)
+#define SNAKE1_STARTX 4
+#define SNAKE2_STARTX (SCREENWIDTH - 5)
+#define SNAKE1_STARTY (SCREENHEIGHT/2)
+#define SNAKE2_STARTY (SCREENHEIGHT/2)
+#define SNAKE1_STARTDIRECTION RIGHT
+#define SNAKE2_STARTDIRECTION LEFT
+#define SNAKE1_MARKER 1
+#define SNAKE2_MARKER 2
+
+#define MAXSNAKESIZE (MAXSQUARES / 2)
 
 struct point {
-	int x;
-	int y;
+    int x;
+    int y;
 };
 
-typedef struct bikestruct{
-	char alive;
-	struct point head;
-	int direction;
-	int size;
-	char marker;
-	char tailcolor;
-	char headcolor;
-	int new_direction;
-}bikestruct;
+#define SetPoint(m_point, m_x, m_y) m_point.x = m_x; m_point.y = m_y
+#define MovePoint(m_point, m_x, m_y) m_point.x += m_x; m_point.y += m_y
+#define EquatePoint(m_point1, m_point2) m_point1.x = m_point2.x; m_point1.y = m_point2.y
 
-#define setpoint(mpoint, mx, my) mpoint.x = mx; mpoint.y = my
-#define movepoint(mpoint, mx, my) mpoint.x += mx; mpoint.y += my
-#define equatepoint(mpoint1, mpoint2) mpoint1.x = mpoint2.x; mpoint1.y = mpoint2.y
+struct snakestructure {
+    char alive;
+    
+    struct point head;
 
-extern bikestruct bike1;
-extern bikestruct bike2;
-	
-
-void bikeinit();
-
-#define bikeIsDirectionAllowed(macrobike, macrodirection) (macrobike.direction + macrodirection != 0)
-
-#define bikeUpdateDirection(macrobike, macrodirection)  if (macrobike.direction + macrodirection != 0) {macrobike.direction = macrodirection;}
+    int direction;
+    int size;
+    
+    char marker;
+    char colorcode;
+    char headcolorcode;
+    
+    int bot_newdirection;
+};
 
 
-#define bikelong(mbike) { attrset(COLOR_PAIR(mbike.tailcolor));				\
-				 mvaddchar(mbike.head, BIKEBODY);			\
-			movepoint(mbike.head, mbike.direction % 2, mbike.direction / 2); \
-			if(game.map[mbike.head.x][mbike.head.y] != 0){	mbike.alive = 0;}\
-			game.map[mbike.head.x][mbike.head.y] = mbike.marker;		\
-			attrset(COLOR_PAIR(mbike.headcolor));				\
-			mvaddchar(mbike.head, BIKEHEAD);				\
-			mbike.size++;						\
-		}
-				
-		
+extern struct snakestructure snake1;
+extern struct snakestructure snake2;
+void snakeInit();
 
-	
-#endif
+#define snakeIsDirectionAllowed(macro_snake, macro_direction) (macro_snake.direction + macro_direction != 0)
+#define snakeUpdateDirection(macro_snake, macro_direction)  if (macro_snake.direction + macro_direction != 0) {macro_snake.direction = macro_direction;}
+#define snakeElongate(m_snake) {                                                            \
+                    attrset(COLOR_PAIR(m_snake.colorcode));                                 \
+                    engineAddCharFromPoint (m_snake.head, SNAKEBODY);                       \
+                    MovePoint (m_snake.head, m_snake.direction % 2, m_snake.direction / 2); \
+                                                                                            \
+                    if (game.map[m_snake.head.x][m_snake.head.y] != 0) {                    \
+                        m_snake.alive = 0;                                                  \
+                        }                                                                   \
+                                                                                            \
+                    game.map[m_snake.head.x][m_snake.head.y] = m_snake.marker;             \
+                    attrset(COLOR_PAIR(m_snake.headcolorcode));                             \
+                    engineAddCharFromPoint (m_snake.head, SNAKEHEAD);                       \
+                    m_snake.size++;                                                         \
+                                                                                            \
+                }
+                
+
+#endif        

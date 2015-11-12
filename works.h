@@ -1,75 +1,87 @@
-#ifndef works_define
-#define works_define
+/*
+GAME ENGINE
+    Handles the internal representation of the game & the graphical engine.
+______________________________________________
 
-#define SCREENWIDTH 80
+FILE: engine.h
+
+*/
+
+#ifndef ENGINE_DEFINED
+#define ENGINE_DEFINED
 #define SCREENHEIGHT 24
+#define SCREENWIDTH 80
+#define MAXSQUARES (SCREENHEIGHT * SCREENWIDTH)
 
-#define MAXSQUARES (SCREENWIDTH*SCREENHEIGHT)
-
-#define WALL '*'
+#define WALL 'W'
 #define WALLCHAR ' '
-#define BIKEHEAD ' '
-#define BIKEBODY ' '
+#define SNAKEHEAD ' '
+#define SNAKEBODY ' '
 
 
-#define BIKE1_COLORCODE 1
-#define BIKE2_COLORCODE 2
+#define SNAKE1_COLORCODE 1
+#define SNAKE2_COLORCODE 2
 #define WALL_COLORCODE 3
-#define OUTSIDE_COLORCODE 7
-#define BIKE1HEAD_COLORCODE 5
-#define BIKE2HEAD_COLORCODE 6
+#define OUTSIDE_COLORCODE 4
+#define SNAKE1HEAD_COLORCODE 5
+#define SNAKE2HEAD_COLORCODE 6
+
 #define COLOR_GREY 8
+struct gamestructure {
+    char state;
+    char speed;
+    int difficulty;
+    int depth;
+    char winner;
+    
+    char map[SCREENWIDTH][SCREENHEIGHT];
+};
 
-typedef struct gamestructure {
-	char state;
-	char speed;
-	int difficulty;
-	int depth;
-	char winner;
-	char map[SCREENWIDTH][SCREENHEIGHT];
-
-}gamestructure;
-
-
-#define SINGLEPLAYER 1
-#define TWOPLAYER 2
+#define SINGLEPLAYERGAME 1
+#define TWOPLAYERGAME 2
 #define PAUSED 3
 #define MAIN_MENU 4
 #define END_MENU 5
 
 
 #define GAMEDELAY (50000 * (5 - game.speed))
-#define MAXKEYSIZE 3
+#define MAXKEYBUFFERSIZE 3
 #define ENGINETIMEOUTCOUNTER 30
 
 #define PLAYER1 1
 #define PLAYER2 2
 #define DRAW 0
 
-extern gamestructure game;
+extern struct gamestructure game;
+void engineInit();
+void engineDrawWalls();
+void engineClearMap();
+void engineStartGameEnvironment();
+void engineStartMenuEnvironment();
+void engineProcessGameWinner();
 
-void startgame();
-void startmenu();
-void walls();
-void worksclearmap();
-void gamewinner();
-//void engineSleepAndCallBot(bikestruct* botbikepointer, bikestruct* usrbikepointer, long int usleeptime);
+#define engineAddChar(m_x, m_y, m_char)  mvaddch  (m_y, m_x, m_char)
+#define engineAddStr(m_x, m_y, m_str)    mvaddstr (m_y, m_x, m_str)
+#define enginePrintF(m_x, m_y, ...)      mvprintw (m_y, m_x, __VA_ARGS__)
+#define engineAddCharFromPoint(m_point, m_symbol) mvaddch(m_point.y, m_point.x, m_symbol)
 
-#define mvaddchar(mpoint, msymbol) mvaddch(mpoint.y, mpoint.x, msymbol)
-#define MAXQSIZE 10
-typedef struct queue {
-	int* data;
-	int maxqsize;
-	int front;
-	int behindback;
-	int lastenqueued;
-	int size;
+#define MAXQUEUESIZE 10
+
+
+typedef struct queue_ {
+    int* data;
+    int maxqueuesize;
+    int front;
+    int behindback;
+    int lastenqueued;
+    int size;
 } queue;
 
+void InitQueue (queue* q, int* array, int arraysize);
+void enqueue (queue* q, int val);
+int dequeue (queue* q);
+void FreeQueue (queue* q);
 
-void initqueue(queue* q, int* array, int n);
-void enqueue(queue* q, int val);
-int dequeue(queue* q);
-void freequeue(queue* q);
+
 
 #endif

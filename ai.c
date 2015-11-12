@@ -1,12 +1,11 @@
 #include <pthread.h>
+#include <errno.h>
 #include <string.h>
 #include <limits.h>
+
 #include "works.h"
 #include "bike.h"
 #include "ai.h"
-
-
-
 
 pthread_mutex_t processing = PTHREAD_MUTEX_INITIALIZER;
 int doneflag;
@@ -22,10 +21,10 @@ int dijk_seq[4] = {0, 0, 1, -1};
 void *aiProcessGame(void *data){    
     pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
 
-    bikestruct* botbikepointer = *((struct bikestruct**) data + 0);
-    bikestruct* usrbikepointer = *((struct bikestruct**) data + 1);
+    struct snakestructure* botsnakepointer = *((struct snakestructure**) data + 0);
+    struct snakestructure* usrsnakepointer = *((struct snakestructure**) data + 1);
     
-    botbikepointer->new_direction = aiMinimax(botbikepointer, usrbikepointer);
+	botsnakepointer->bot_newdirection = aiMinimax(botsnakepointer, usrsnakepointer);
     
     pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
     pthread_cleanup_push(aiUnlockMutex, (void *) &processing);
@@ -47,23 +46,22 @@ void aiUnlockMutex( void *data){
 }
 
 
-
-int aiMinimax(struct bikestruct* botbikepointer, struct bikestruct* usrbikepointer){
-   	struct future FG; 
+int aiMinimax(struct snakestructure* botsnakepointer, struct snakestructure* usrsnakepointer){
+ 	struct future FG; 
 	int i, j;
         	
     memcpy (FG.map, game.map, (SCREENWIDTH * SCREENHEIGHT * sizeof(char)));
-    memcpy (&(FG.bot), botbikepointer, sizeof(struct bikestruct));
-    memcpy (&(FG.usr), usrbikepointer, sizeof(struct bikestruct));
+    memcpy (&(FG.bot), botsnakepointer, sizeof(struct snakestructure));
+    memcpy (&(FG.usr), usrsnakepointer, sizeof(struct snakestructure));
 
     int alpha = INT_MIN;   //alpha
     
     int beta = INT_MAX;  //beta
     
-    int movesarray[2][3]; 
-    j = 0;  
+    int movesarray[2][3];   //There are going to be 3 allowed directions
+    j = 0;  //Incremented every time an allowed direction is encountered
     for (i=0; i<4; i++){
-    	if (bikeIsDirectionAllowed (FG.bot, directions[i])) {
+    	if (snakeIsDirectionAllowed (FG.bot, directions[i])) {
     		movesarray[0][j] = directions[i];
     		movesarray[1][j] = aiScore(FG, directions[i], 0, alpha, beta);
             if (alpha < movesarray[1][j]) alpha = movesarray[1][j];
@@ -79,7 +77,7 @@ int aiMinimax(struct bikestruct* botbikepointer, struct bikestruct* usrbikepoint
 
 
 int aiScore( struct future FG, int direction, int depth, int alpha, int beta){
-	bikeUpdateDirection (FG.bot, direction);
+	snakeUpdateDirection (FG.bot, direction);
 	aiElongate (FG.bot);
 	
 	if (FG.bot.alive == 0) return INT_MIN/3;	
@@ -88,7 +86,7 @@ int aiScore( struct future FG, int direction, int depth, int alpha, int beta){
 	int j = 0;
 	int subscores[3];
 	for (i=0; i<4; i++){
-    	if (bikeIsDirectionAllowed (FG.usr, directions[i])) {
+    	if (snakeIsDirectionAllowed (FG.usr, directions[i])) {
     		subscores[j] = aiSubScore(FG, directions[i], depth + 1, alpha, beta);
             if (beta > subscores[j]) beta = subscores[j];
             if (alpha > beta) return INT_MIN;
@@ -101,19 +99,18 @@ int aiScore( struct future FG, int direction, int depth, int alpha, int beta){
 
 
 
-
 int aiSubScore( struct future FG, int direction, int depth, int alpha, int beta){
-	bikeUpdateDirection (FG.usr, direction);
+	snakeUpdateDirection (FG.usr, direction);
 	aiElongate (FG.usr);
 	if (FG.usr.alive == 0) return INT_MAX/3;
     
 	if (depth >= game.depth) return aiVoronoi(&FG);
 	
 	int i;
-    int j = 0;
+        int j = 0;
 	int scores[3];
 	for (i=0; i<4; i++){
-    	if (bikeIsDirectionAllowed (FG.bot, directions[i])) {
+    	if (snakeIsDirectionAllowed (FG.bot, directions[i])) {
     		scores[j] = aiScore(FG, directions[i], depth, alpha, beta);
             if (alpha < scores[j]) alpha = scores[j];
             if (beta < alpha) return INT_MAX;
@@ -127,7 +124,6 @@ int aiSubScore( struct future FG, int direction, int depth, int alpha, int beta)
 
 
 
-    
 int aiVoronoi(struct future* FGptr){  
     int botcomponent, usrcomponent, result = 0;
     
@@ -169,8 +165,8 @@ int aiDijkstra(char map[SCREENWIDTH][SCREENHEIGHT], int distance[SCREENWIDTH][SC
         }
     }
 
-    initqueue (&dijk_unvisited_x, dijk_unvisited_x_arr, MAXSQUARES);
-    initqueue (&dijk_unvisited_y, dijk_unvisited_y_arr, MAXSQUARES);
+    InitQueue (&dijk_unvisited_x, dijk_unvisited_x_arr, MAXSQUARES);
+    InitQueue (&dijk_unvisited_y, dijk_unvisited_y_arr, MAXSQUARES);
     
     enqueue (&dijk_unvisited_x, start_x);
     enqueue (&dijk_unvisited_y, start_y);
