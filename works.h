@@ -1,12 +1,26 @@
-/*
-GAME ENGINE
-    Handles the internal representation of the game & the graphical engine.
-______________________________________________
+/*   This a simple version of the arcade game tron
+   Copyright (C) 2015  K Y Sandeep
 
-FILE: engine.h
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software Foundation,
+   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+
+   Gnomovision version 69, Copyright (C) year  name of author
+   Gnomovision comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
+   This is free software, and you are welcome to redistribute it
+   under certain conditions; type `show c' for details
 
 */
-
 #ifndef ENGINE_DEFINED
 #define ENGINE_DEFINED
 #define SCREENHEIGHT 24
@@ -28,13 +42,13 @@ FILE: engine.h
 
 #define COLOR_GREY 8
 struct gamestructure {
-    char state;
-    char speed;
-    int difficulty;
-    int depth;
-    char winner;
-    
-    char map[SCREENWIDTH][SCREENHEIGHT];
+	char state;
+	char speed;
+	int difficulty;
+	int depth;
+	char winner;
+
+	char map[SCREENWIDTH][SCREENHEIGHT];
 };
 
 #define SINGLEPLAYERGAME 1
@@ -69,12 +83,12 @@ void engineProcessGameWinner();
 
 
 typedef struct queue_ {
-    int* data;
-    int maxqueuesize;
-    int front;
-    int behindback;
-    int lastenqueued;
-    int size;
+	int* data;
+	int maxqueuesize;
+	int front;
+	int behindback;
+	int lastenqueued;
+	int size;
 } queue;
 
 void InitQueue (queue* q, int* array, int arraysize);
